@@ -2,7 +2,7 @@ from pygamehelper import PygameHelper
 import pygame
 from pygame.locals import *
 from vec2d import vec2d
-from math import cos, sin
+from math import cos, sin, pi
 from environment import Environment
 pygame.init()        	        
         
@@ -225,8 +225,15 @@ class Starter(PygameHelper):
                 pygame.draw.circle(self.screen, a.color, a.pos+self.topx, a.size)
                 dirct = vec2d(0,0)
                 dirct.x = int(15*cos(a.phi))
-                dirct.y = int(15*sin(a.phi))             
+                dirct.y = int(15*sin(a.phi))
                 pygame.draw.line(self.screen, (0,0,255), a.pos+self.topx, (a.pos+self.topx+dirct))
+                if a==self.e.selected:
+                    for i in range(0,36):
+                        dirct = vec2d(0,0)
+                        dirct.x = int(0.01*a.control.PIN.PI.activity[10*i]*cos(2*pi*i/36.))
+                        dirct.y = int(0.01*a.control.PIN.PI.activity[10*i]*sin(2*pi*i/36.))
+                        pygame.draw.line(self.screen, (20,20,255), a.pos+self.topx, (a.pos+self.topx+dirct), 2)
+               
              
                 if a==self.e.selected:
                     pygame.draw.circle(self.screen, (225,225,225), a.pos+self.topx, a.size-2)
