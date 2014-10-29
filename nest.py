@@ -11,6 +11,7 @@ class Nest:
         self.color = (int(uniform(0,255)),int(uniform(0,255)),int(uniform(0,255)))
         print self.color
         self.theta = 0.0
+        self.phi = 0.0
         
         for i in range(10):
             self.add_agent(self.pos)

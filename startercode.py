@@ -102,6 +102,7 @@ class Starter(PygameHelper):
            for n in self.e.nests:
                for a in n.agents:
                    if a==self.e.selected:
+                       n.num_agents-= 1
                        self.actiontext = "Removed agent "+str(n.agents.index(a))
                        n.agents.remove(self.e.selected)         
                if n== self.e.selected:
@@ -149,22 +150,22 @@ class Starter(PygameHelper):
         if button==1:
             tooclose = 0
             for g in self.e.goals:
-                if g.pos.get_distance(vec2d(pos)-self.topx) <= 10:
+                if g.pos.get_distance(vec2d(pos)-self.topx) <= 5:
                     tooclose = 1
                     self.e.selected= g
                     self.actiontext = "Selected goal "+str(self.e.goals.index(g))
             for lm in self.e.landmarks:
-                if lm.pos.get_distance(vec2d(pos)-self.topx) <= 10:
+                if lm.pos.get_distance(vec2d(pos)-self.topx) <= 5:
                     tooclose = 1
                     self.e.selected= lm
                     self.actiontext = "Selected landmark "+str(self.e.landmarks.index(lm))
             for n in self.e.nests:
-                if n.pos.get_distance(vec2d(pos)-self.topx) <= 20:
+                if n.pos.get_distance(vec2d(pos)-self.topx) <= 5:
                     tooclose = 1
                     self.e.selected= n
                     self.actiontext = "Selected nest "+str(self.e.nests.index(n))
                 for a in n.agents:
-                    if a.pos.get_distance(vec2d(pos)-self.topx) <= 20:
+                    if a.pospx.get_distance(vec2d(pos)-self.topx) <= 5:
                         tooclose = 1
                         self.e.selected= a
                         self.actiontext = "Selected agent "+str(n.agents.index(a))
@@ -182,7 +183,7 @@ class Starter(PygameHelper):
         black = (0, 0, 0)
         scoretext=font.render(self.actiontext, 1,black)	
         if self.e.selected != 0:         
-            thetatext=font.render("Theta = "+str(self.e.selected.theta), 1,black)
+            thetatext=font.render("Phi = "+str(self.e.selected.phi), 1,black)
             self.screen.blit(thetatext, (self.bound+self.w/2, self.h-self.bound))
         self.screen.blit(scoretext, (self.bound, self.h-self.bound))
     
@@ -222,23 +223,22 @@ class Starter(PygameHelper):
                 #           pygame.draw.circle(self.screen, (255,0,0), a.target, 5, 1)
                 for ph in a.pheros:
                     pygame.draw.circle(self.screen, (200,200,15), ph.pos+self.topx, ph.size)
-                pygame.draw.circle(self.screen, a.color, a.pos+self.topx, a.size)
+                pygame.draw.circle(self.screen, a.color, a.pospx+self.topx, a.size)
                 dirct = vec2d(0,0)
-                dirct.x = int(15*cos(a.phi))
-                dirct.y = int(15*sin(a.phi))
-                pygame.draw.line(self.screen, (0,0,255), a.pos+self.topx, (a.pos+self.topx+dirct))
                 if a==self.e.selected:
-                    for i in range(0,36):
+                    for i in range(0,360):
                         dirct = vec2d(0,0)
-                        dirct.x = int(0.01*a.control.PIN.PI.activity[10*i]*cos(2*pi*i/36.))
-                        dirct.y = int(0.01*a.control.PIN.PI.activity[10*i]*sin(2*pi*i/36.))
-                        pygame.draw.line(self.screen, (20,20,255), a.pos+self.topx, (a.pos+self.topx+dirct), 2)
-               
+                        dirct.x = int(10.*a.control.PIN.G.activity[1*i]*cos(2.*pi*i/360.))
+                        dirct.y = int(-10.*a.control.PIN.G.activity[1*i]*sin(2.*pi*i/360.))
+                        pygame.draw.line(self.screen, (20,20,255), a.pospx+self.topx, (a.pospx+self.topx+dirct), 2)
+                dirct.x = int(15*cos(a.phi))
+                dirct.y = int(-15*sin(a.phi))
+                pygame.draw.line(self.screen, (255,0,0), a.pospx+self.topx, (a.pospx+self.topx+dirct))
              
                 if a==self.e.selected:
-                    pygame.draw.circle(self.screen, (225,225,225), a.pos+self.topx, a.size-2)
+                    pygame.draw.circle(self.screen, (225,225,225), a.pospx+self.topx, a.size-2)
                 else:
-                    pygame.draw.circle(self.screen, (0,0,0), a.pos+self.topx, a.size-2)
+                    pygame.draw.circle(self.screen, (0,0,0), a.pospx+self.topx, a.size-2)
                     
         
         for g in self.e.goals:

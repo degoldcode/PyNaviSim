@@ -13,10 +13,12 @@ class Agent:
         else:
             self.pdrop= 0.00
         self.pos= vec2d(0,0)
+        self.pospx= vec2d(0,0)
         self.target= vec2d(0,0)
-        self.phi = pi*uniform(0,359)/180.
+        self.phi = pi*uniform(0.,2.)
         self.dist = sqrt(self.pos.x*self.pos.x + self.pos.y*self.pos.y)
         self.theta = 0.0
+        self.speed= 0.1        
         self.size = 5
         self.color = (0,0,0)
         self.mode_run = 0
@@ -26,12 +28,13 @@ class Agent:
     def update(self):
         dir = vec2d(0,0)
         if self.mode_run == 0:
-            dphi= gauss(0.0,0.5)
+            dphi= gauss(0.0,0.15)
         elif self.mode_run == 1:
             dphi = 0.5*(sin(self.theta-self.phi-pi))
         self.phi += dphi
-        dir.x = 3.*cos(self.phi)
-        dir.y = 3.*sin(self.phi)
+        self.bound(self.phi)
+        dir.x = self.speed*cos(self.phi)
+        dir.y = self.speed*sin(self.phi)
         if uniform(0.,1.) < self.pdrop:
             self.drop()
         for ph in self.pheros:
@@ -41,13 +44,18 @@ class Agent:
              
         if dir.length>3:
             dir.length= 3
-        dir.x= int(dir.x)
-        dir.y= int(dir.y)
         self.pos= self.pos + dir
+        self.pospx.x= int(self.pos.x)
+        self.pospx.y= int(-self.pos.y)
         self.dist = sqrt((self.pos.x-self.npos.x)*(self.pos.x-self.npos.x) + (self.pos.y-self.npos.y)*(self.pos.y-self.npos.y))
         self.theta = atan2(self.pos.y-self.npos.y,self.pos.x-self.npos.x)
         self.control.update(self.phi, 3.)
         
+    def bound(self, number):
+        if number > pi:
+            number-=2*pi
+        if number < -pi:
+            number+=2*pi
     
     def drop(self):
         ph= Pheromone(self.pos)
